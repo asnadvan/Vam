@@ -1,11 +1,192 @@
-صفحه وام نمایشی body {font-family: Tahoma, sans-serif; background-color: #f5f7fa; margin:0; padding:0; direction: rtl;} .header{background-color:#1976d2;color:white;text-align:center;padding:15px 10px;font-size:16px;} .container{max-width:600px;margin:30px auto;background:white;border-radius:10px;padding:20px;box-shadow:0px 4px 12px rgba(0,0,0,0.1);} h2{text-align:center;color:#1976d2;} .form-group{margin:20px 0;text-align:center;} input[type="number"]{width:120px;padding:10px;font-size:16px;text-align:center;border-radius:5px;border:1px solid #ccc;} button{padding:10px 15px;margin:0 5px;font-size:16px;border:none;border-radius:5px;background-color:#1976d2;color:white;cursor:pointer;} button:hover{background-color:#0d47a1;} .result{margin-top:20px;font-size:18px;text-align:center;color:#333;} 
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>درخواست وام</title>
+<style>
+    body { 
+        font-family: Tahoma, sans-serif; 
+        background-color: #f7f9fb; 
+        margin: 0; 
+        padding: 0; 
+        color: #333;
+    }
+    header {
+        width: 100%;
+        background: #1a4b7b;
+        color: white;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 20px;
+        font-weight: bold;
+        position: relative;
+    }
+    header .test-warning {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: red;
+        color: white;
+        font-size: 12px;
+        padding: 2px 8px;
+        animation: blink 1s infinite;
+    }
+    @keyframes blink {
+        0%,50%,100%{opacity:1;}
+        25%,75%{opacity:0;}
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 40px 20px;
+        gap: 40px;
+    }
+    .info, .form-container {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 30px;
+        flex: 1;
+        min-width: 350px;
+        max-width: 450px;
+    }
+    .info h2 {
+        color: #1a4b7b;
+        margin-bottom: 15px;
+    }
+    .info ul {
+        list-style: none;
+        padding: 0;
+        line-height: 1.8;
+    }
+    .info ul li::before {
+        content: "✔️";
+        margin-right: 8px;
+        color: #1a4b7b;
+    }
+    h2.form-title {
+        text-align: center;
+        color: #1a4b7b;
+        margin-bottom: 20px;
+    }
+    label { 
+        display: block; 
+        margin-top: 15px; 
+        font-weight: 500;
+    }
+    label span.required {
+        color: red;
+    }
+    input, select { 
+        width: 100%; 
+        padding: 10px; 
+        margin-top: 5px; 
+        border-radius: 5px; 
+        border: 1px solid #ccc; 
+        box-sizing: border-box; 
+    }
+    input[readonly] { 
+        background: #f0f0f0; 
+        color: #555;
+        font-weight: bold;
+    }
+    button { 
+        width: 100%; 
+        margin-top: 25px; 
+        padding: 12px; 
+        background: #28a745; 
+        color: white; 
+        border: none; 
+        border-radius: 6px; 
+        cursor: pointer; 
+        font-size: 16px; 
+    }
+    button:hover { 
+        background: #218838; 
+    }
+    .note {
+        text-align: center;
+        font-size: 12px;
+        color: #888;
+        margin-top: 10px;
+    }
+</style>
+</head>
+<body>
+<header>
+    درخواست وام آنلاین
+    <div class="test-warning">این سایت درحال تست و اجرای موقت میباشد توسط احمدرضا'لو</div>
+</header>
 
-این صفحه درحال تست و نمایشی می‌باشد. طراحی و گرافی توسط تیم احمدرضا’لو
+<div class="content">
+    <div class="info">
+        <h2>چرا از ما وام بگیری؟</h2>
+        <ul>
+            <li>بی ضامن، بی‌ وثیقه</li>
+            <li>بدون نیاز به ضامن، چک یا سفته</li>
+            <li>سریع و فوری – در کمتر از ۴۸ الی ۷۲ ساعت</li>
+            <li>کاملا آنلاین – بدون مراجعه حضوری</li>
+        </ul>
+    </div>
 
-درخواست وام
+    <div class="form-container">
+        <h2 class="form-title">فرم درخواست وام</h2>
+        <form id="loanForm">
+            <label>نام و نام خانوادگی <span class="required">*</span></label>
+            <input type="text" id="name" placeholder="مثال: احمد رضایی" required>
 
-- + 
+            <label>کد ملی <span class="required">*</span></label>
+            <input type="text" id="nationalId" placeholder="مثال: 1234567890" required>
 
-کارمزد وام: ۵,۰۰۰,۰۰۰ ریال
+            <label>آدرس <span class="required">*</span></label>
+            <input type="text" id="address" placeholder="مثال: تهران، میدان آزادی" required>
 
-const amountInput = document.getElementById('amount'); const feeDiv = document.getElementById('fee'); const rate = 0.05; function updateFee() { let amount = parseInt(amountInput.value); if(isNaN(amount)||amount<1000000) amount=1000000; const fee = Math.round(amount*rate); feeDiv.textContent = `کارمزد وام: ${fee.toLocaleString()} ریال`; } function increase(){amountInput.value=parseInt(amountInput.value)+parseInt(amountInput.step);updateFee();} function decrease(){amountInput.value=Math.max(parseInt(amountInput.value)-parseInt(amountInput.step),parseInt(amountInput.min));updateFee();} amountInput.addEventListener('input',updateFee); 
+            <label>کد پستی <span class="required">*</span></label>
+            <input type="text" id="postalCode" placeholder="مثال: 1234567890" required>
+
+            <label>شماره تماس <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="مثال: 09123456789" required>
+
+            <label>مبلغ وام (ریال) <span class="required">*</span></label>
+            <input type="text" id="amount" placeholder="مثال: 100,000,000" required readonly>
+
+            <label>کارمزد وام (5%) <span class="required">*</span></label>
+            <input type="text" id="fee" readonly>
+
+            <label>مساحبه گر <span class="required">*</span></label>
+            <select id="interviewer" required>
+                <option value="">انتخاب کنید</option>
+                <option>علی رضایی</option>
+                <option>سارا احمدی</option>
+                <option>محمد موسوی</option>
+            </select>
+
+            <button type="submit">ثبت درخواست وام</button>
+        </form>
+        <div class="note">درخواست وام شما ثبت و بزودی بررسی میشود</div>
+    </div>
+</div>
+
+<script>
+function formatNumber(num){
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const amountInput = document.getElementById('amount');
+const feeInput = document.getElementById('fee');
+
+// نمونه مبلغ پیش‌فرض خودکار
+let defaultAmount = 100000000;
+amountInput.value = formatNumber(defaultAmount);
+feeInput.value = formatNumber(Math.round(defaultAmount*0.05)) + ' ریال';
+
+document.getElementById('loanForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('درخواست وام شما ثبت و بزودی بررسی میشود');
+});
+</script>
+</body>
+</html>
