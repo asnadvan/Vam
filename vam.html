@@ -1,0 +1,11 @@
+صفحه وام نمایشی body {font-family: Tahoma, sans-serif; background-color: #f5f7fa; margin:0; padding:0; direction: rtl;} .header{background-color:#1976d2;color:white;text-align:center;padding:15px 10px;font-size:16px;} .container{max-width:600px;margin:30px auto;background:white;border-radius:10px;padding:20px;box-shadow:0px 4px 12px rgba(0,0,0,0.1);} h2{text-align:center;color:#1976d2;} .form-group{margin:20px 0;text-align:center;} input[type="number"]{width:120px;padding:10px;font-size:16px;text-align:center;border-radius:5px;border:1px solid #ccc;} button{padding:10px 15px;margin:0 5px;font-size:16px;border:none;border-radius:5px;background-color:#1976d2;color:white;cursor:pointer;} button:hover{background-color:#0d47a1;} .result{margin-top:20px;font-size:18px;text-align:center;color:#333;} 
+
+این صفحه درحال تست و نمایشی می‌باشد. طراحی و گرافی توسط تیم احمدرضا’لو
+
+درخواست وام
+
+- + 
+
+کارمزد وام: ۵,۰۰۰,۰۰۰ ریال
+
+const amountInput = document.getElementById('amount'); const feeDiv = document.getElementById('fee'); const rate = 0.05; function updateFee() { let amount = parseInt(amountInput.value); if(isNaN(amount)||amount<1000000) amount=1000000; const fee = Math.round(amount*rate); feeDiv.textContent = `کارمزد وام: ${fee.toLocaleString()} ریال`; } function increase(){amountInput.value=parseInt(amountInput.value)+parseInt(amountInput.step);updateFee();} function decrease(){amountInput.value=Math.max(parseInt(amountInput.value)-parseInt(amountInput.step),parseInt(amountInput.min));updateFee();} amountInput.addEventListener('input',updateFee); 
