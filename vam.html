@@ -1,192 +1,46 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>درخواست وام</title>
-<style>
-    body { 
-        font-family: Tahoma, sans-serif; 
-        background-color: #f7f9fb; 
-        margin: 0; 
-        padding: 0; 
-        color: #333;
-    }
-    header {
-        width: 100%;
-        background: #1a4b7b;
-        color: white;
-        text-align: center;
-        padding: 20px 0;
-        font-size: 20px;
-        font-weight: bold;
-        position: relative;
-    }
-    header .test-warning {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: red;
-        color: white;
-        font-size: 12px;
-        padding: 2px 8px;
-        animation: blink 1s infinite;
-    }
-    @keyframes blink {
-        0%,50%,100%{opacity:1;}
-        25%,75%{opacity:0;}
-    }
-    .content {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        padding: 40px 20px;
-        gap: 40px;
-    }
-    .info, .form-container {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        padding: 30px;
-        flex: 1;
-        min-width: 350px;
-        max-width: 450px;
-    }
-    .info h2 {
-        color: #1a4b7b;
-        margin-bottom: 15px;
-    }
-    .info ul {
-        list-style: none;
-        padding: 0;
-        line-height: 1.8;
-    }
-    .info ul li::before {
-        content: "✔️";
-        margin-right: 8px;
-        color: #1a4b7b;
-    }
-    h2.form-title {
-        text-align: center;
-        color: #1a4b7b;
-        margin-bottom: 20px;
-    }
-    label { 
-        display: block; 
-        margin-top: 15px; 
-        font-weight: 500;
-    }
-    label span.required {
-        color: red;
-    }
-    input, select { 
-        width: 100%; 
-        padding: 10px; 
-        margin-top: 5px; 
-        border-radius: 5px; 
-        border: 1px solid #ccc; 
-        box-sizing: border-box; 
-    }
-    input[readonly] { 
-        background: #f0f0f0; 
-        color: #555;
-        font-weight: bold;
-    }
-    button { 
-        width: 100%; 
-        margin-top: 25px; 
-        padding: 12px; 
-        background: #28a745; 
-        color: white; 
-        border: none; 
-        border-radius: 6px; 
-        cursor: pointer; 
-        font-size: 16px; 
-    }
-    button:hover { 
-        background: #218838; 
-    }
-    .note {
-        text-align: center;
-        font-size: 12px;
-        color: #888;
-        margin-top: 10px;
-    }
-</style>
-</head>
-<body>
-<header>
-    درخواست وام آنلاین
-    <div class="test-warning">این سایت درحال تست و اجرای موقت میباشد توسط احمدرضا'لو</div>
-</header>
+document.getElementById("saveDraft").addEventListener("click", ()=>{
+      const form = new FormData(document.getElementById("loanForm"));
+      const data = {};
+      form.forEach((v,k)=> data[k]=v);
+      localStorage.setItem("loanDraft", JSON.stringify(data));
+      toast("پیش‌نویس ذخیره شد.", true);
+    });
 
-<div class="content">
-    <div class="info">
-        <h2>چرا از ما وام بگیری؟</h2>
-        <ul>
-            <li>بی ضامن، بی‌ وثیقه</li>
-            <li>بدون نیاز به ضامن، چک یا سفته</li>
-            <li>سریع و فوری – در کمتر از ۴۸ الی ۷۲ ساعت</li>
-            <li>کاملا آنلاین – بدون مراجعه حضوری</li>
-        </ul>
-    </div>
+    // اعتبارسنجی و ارسال ساختگی
+    document.getElementById("loanForm").addEventListener("submit", (e)=>{
+      e.preventDefault();
+      let ok = true;
 
-    <div class="form-container">
-        <h2 class="form-title">فرم درخواست وام</h2>
-        <form id="loanForm">
-            <label>نام و نام خانوادگی <span class="required">*</span></label>
-            <input type="text" id="name" placeholder="مثال: احمد رضایی" required>
+      const checks = [
+        {id:"fullName", valid: v=> v.trim().length>1},
+        {id:"nid", valid: v=> /^\d{10}$/.test(v)},
+        {id:"phone", valid: v=> /^09\d{9}$/.test(v)},
+        {id:"amount", valid: v=> /^\d{5,}$/.test(v)}, // حداقل ۵ رقم
+        {id:"income", valid: v=> /^\d{5,}$/.test(v)},
+        {id:"term", valid: v=> !!v}
+      ];
 
-            <label>کد ملی <span class="required">*</span></label>
-            <input type="text" id="nationalId" placeholder="مثال: 1234567890" required>
+      checks.forEach(({id,valid})=>{
+        const val = document.getElementById(id).value;
+        const isValid = valid(val);
+        showError(id, !isValid);
+        if(!isValid) ok=false;
+      });
 
-            <label>آدرس <span class="required">*</span></label>
-            <input type="text" id="address" placeholder="مثال: تهران، میدان آزادی" required>
+      if(!ok){ toast("لطفاً خطاهای فرم را برطرف کنید."); return; }
 
-            <label>کد پستی <span class="required">*</span></label>
-            <input type="text" id="postalCode" placeholder="مثال: 1234567890" required>
+      // شبیه‌سازی ارسال
+      const payload = Object.fromEntries(new FormData(e.target).entries());
+      console.log("SUBMIT", payload); // برای تست
+      localStorage.removeItem("loanDraft");
+      toast("درخواست شما با موفقیت ثبت شد ✅", true);
 
-            <label>شماره تماس <span class="required">*</span></label>
-            <input type="tel" id="phone" placeholder="مثال: 09123456789" required>
+      // در پروژه واقعی اینجا fetch بزنید:
+      // fetch('/api/loan', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+    });
 
-            <label>مبلغ وام (ریال) <span class="required">*</span></label>
-            <input type="text" id="amount" placeholder="مثال: 100,000,000" required readonly>
-
-            <label>کارمزد وام (5%) <span class="required">*</span></label>
-            <input type="text" id="fee" readonly>
-
-            <label>مساحبه گر <span class="required">*</span></label>
-            <select id="interviewer" required>
-                <option value="">انتخاب کنید</option>
-                <option>علی رضایی</option>
-                <option>سارا احمدی</option>
-                <option>محمد موسوی</option>
-            </select>
-
-            <button type="submit">ثبت درخواست وام</button>
-        </form>
-        <div class="note">درخواست وام شما ثبت و بزودی بررسی میشود</div>
-    </div>
-</div>
-
-<script>
-function formatNumber(num){
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-const amountInput = document.getElementById('amount');
-const feeInput = document.getElementById('fee');
-
-// نمونه مبلغ پیش‌فرض خودکار
-let defaultAmount = 100000000;
-amountInput.value = formatNumber(defaultAmount);
-feeInput.value = formatNumber(Math.round(defaultAmount*0.05)) + ' ریال';
-
-document.getElementById('loanForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    alert('درخواست وام شما ثبت و بزودی بررسی میشود');
-});
-</script>
+    // اگر کاربر دارک‌مود سیستم را اجباری کرده بود و مرورگر «تحمیلِ تم تیره» انجام می‌دهد،
+    // باز هم به‌خاطر رنگ‌های تعریف‌شده خوانایی حفظ می‌شود.
+  </script>
 </body>
 </html>
